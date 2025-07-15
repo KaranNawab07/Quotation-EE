@@ -70,8 +70,11 @@ export default function App() {
           <input value={t.qty} onChange={e => handleChange(i,'qty',e.target.value)} placeholder="Quantity" />
         </div>
       ))}
-      <button onClick={addTube}>+ Add Tube</button>
-      <button onClick={generateQuote}>Generate Quote</button>
+      <div className="flex gap-4">
+  <button onClick={addTube}>+ Add Tube</button>
+  <button onClick={generateQuote}>Generate Quote</button>
+</div>
+
 
       {quote && (
         <div>
