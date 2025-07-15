@@ -78,8 +78,13 @@ export default function App() {
 
       {quote && (
         <div>
-          <pre>{quote}</pre>
-          <button onClick={downloadPDF}>Download PDF</button>
+          <div className="space-y-4">
+  <pre>{quote}</pre>
+  <div className="flex">
+    <button onClick={downloadPDF}>Download PDF</button>
+  </div>
+</div>
+
         </div>
       )}
     </div>
