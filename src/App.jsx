@@ -2,24 +2,35 @@ import { useState } from 'react';
 import jsPDF from 'jspdf';
 
 export default function App() {
-  const [od, setOd] = useState(0);
-  const [id, setId] = useState(0);
-  const [length, setLength] = useState(0);
-  const [qty, setQty] = useState(1);
+  const [tubes, setTubes] = useState([{ od: '', id: '', length: '', qty: '' }]);
   const [quote, setQuote] = useState('');
 
   const density = 1.65;
   const ratePerKg = 13900;
 
+  const handleChange = (i, field, val) => {
+    const arr = [...tubes];
+    arr[i][field] = val;
+    setTubes(arr);
+  };
+
+  const addTube = () => setTubes([...tubes, { od: '', id: '', length: '', qty: '' }]);
+
   const generateQuote = () => {
-    const thickness = (od - id) / 2;
-    const volume = (Math.PI / 4) * (od ** 2 - id ** 2) * length / 1000;
-    const weight = volume * density / 1000;
-    const price = Math.round(weight * ratePerKg);
+    let out = "Thank you...\n\nQUOTE:\n\n";
+    tubes.forEach((t, i) => {
+      const od = parseFloat(t.od), id = parseFloat(t.id), len = parseFloat(t.length), qty = parseInt(t.qty);
+      const thick = ((od - id) / 2).toFixed(2);
+      const vol = (Math.PI / 4)*(od*od - id*id)*len/1000;
+      const weight = vol * density / 1000;
+      const price = Math.round(weight * ratePerKg);
 
-    const text = `Thank you for your inquiry. Please find below our quotation for the same.\n\nQUOTE:\n\n[1] Name : Carbon Fiber Round Tube\n\nSizes :  ${od} mm OD x ${id} mm ID x ${length} mm L [ ${thickness.toFixed(2)} mm thickness]  \nFinish of surface : Matte finish\nMaterial : Carbon fiber Bi-directional 3K woven fabric + Epoxy resin as matrix.\nProcess : Roll wrap\nQty./lot required : ${qty} nos\nPrice/ pcs. : Rs.${price}/-\n\nNote:\n[1] The dimensional tolerance for Tube is : OD +/- 0.1 mm, Length + 2-5 mm.\n\nTerms & Conditions:\nPayment : 50% advance along with the Purchase order, remaining amount to be paid prior to dispatch.\nTaxes : 18 % GST Extra as actual\nInspection : At our end\nPacking : Extra as actual\nFreight : Extra as actual.\nValidity : 7 days.\n\nHoping to receive your valued order.`;
-
-    setQuote(text);
+      out += `[${i+1}] Name : Carbon Fiber Round Tube\n\n`;
+      out += `Sizes :  ${od} mm OD x ${id} mm ID x ${len} mm L [ ${thick} mm thickness]\n`;
+      out += `Qty./lot required : ${qty} nos\nPrice/ pcs. : Rs.${price}/-\n\n`;
+    });
+    out += "Note:\n[1] ...\n\nTerms & Conditions:\n...";
+    setQuote(out);
   };
 
   const downloadPDF = () => {
@@ -32,16 +43,22 @@ export default function App() {
   return (
     <div className="max-w-2xl mx-auto p-6 space-y-4">
       <h1 className="text-xl font-bold">Carbon Fiber Quote Generator</h1>
-      <input type="number" placeholder="OD (mm)" className="border p-2 w-full" onChange={e => setOd(Number(e.target.value))} />
-      <input type="number" placeholder="ID (mm)" className="border p-2 w-full" onChange={e => setId(Number(e.target.value))} />
-      <input type="number" placeholder="Length (mm)" className="border p-2 w-full" onChange={e => setLength(Number(e.target.value))} />
-      <input type="number" placeholder="Quantity" defaultValue={1} className="border p-2 w-full" onChange={e => setQty(Number(e.target.value))} />
-      <button className="bg-blue-500 text-white px-4 py-2 rounded" onClick={generateQuote}>Generate Quote</button>
+      {tubes.map((t, i) => (
+        <div key={i} className="border p-4 rounded bg-gray-50 space-y-2">
+          <h2 className="font-semibold">Tube #{i+1}</h2>
+          <input value={t.od} onChange={e => handleChange(i,'od',e.target.value)} placeholder="OD (mm)" />
+          <input value={t.id} onChange={e => handleChange(i,'id',e.target.value)} placeholder="ID (mm)" />
+          <input value={t.length} onChange={e => handleChange(i,'length',e.target.value)} placeholder="Length (mm)" />
+          <input value={t.qty} onChange={e => handleChange(i,'qty',e.target.value)} placeholder="Quantity" />
+        </div>
+      ))}
+      <button onClick={addTube}>+ Add Tube</button>
+      <button onClick={generateQuote}>Generate Quote</button>
 
       {quote && (
-        <div className="bg-white p-4 border rounded whitespace-pre-wrap">
+        <div>
           <pre>{quote}</pre>
-          <button className="mt-4 bg-green-600 text-white px-4 py-2 rounded" onClick={downloadPDF}>Download PDF</button>
+          <button onClick={downloadPDF}>Download PDF</button>
         </div>
       )}
     </div>
