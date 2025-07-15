@@ -16,22 +16,40 @@ export default function App() {
 
   const addTube = () => setTubes([...tubes, { od: '', id: '', length: '', qty: '' }]);
 
-  const generateQuote = () => {
-    let out = "Thank you...\n\nQUOTE:\n\n";
-    tubes.forEach((t, i) => {
-      const od = parseFloat(t.od), id = parseFloat(t.id), len = parseFloat(t.length), qty = parseInt(t.qty);
-      const thick = ((od - id) / 2).toFixed(2);
-      const vol = (Math.PI / 4)*(od*od - id*id)*len/1000;
-      const weight = vol * density / 1000;
-      const price = Math.round(weight * ratePerKg);
+ const generateQuote = () => {
+  let result = "Thank you for your inquiry. Please find below our quotation for the same.\n\nQUOTE:\n\n";
 
-      out += `[${i+1}] Name : Carbon Fiber Round Tube\n\n`;
-      out += `Sizes :  ${od} mm OD x ${id} mm ID x ${len} mm L [ ${thick} mm thickness]\n`;
-      out += `Qty./lot required : ${qty} nos\nPrice/ pcs. : Rs.${price}/-\n\n`;
-    });
-    out += "Note:\n[1] ...\n\nTerms & Conditions:\n...";
-    setQuote(out);
-  };
+  tubes.forEach((tube, index) => {
+    const od = parseFloat(tube.od);
+    const id = parseFloat(tube.id);
+    const length = parseFloat(tube.length);
+    const qty = parseInt(tube.qty);
+    const thickness = ((od - id) / 2).toFixed(2);
+    const volume = (Math.PI / 4) * (od ** 2 - id ** 2) * length / 1000;
+    const weight = volume * density / 1000;
+    const price = Math.round(weight * ratePerKg);
+
+    result += `[${index + 1}] Name : Carbon Fiber Round Tube\n\n`;
+    result += `Sizes :  ${od} mm OD x ${id} mm ID x ${length} mm L [ ${thickness} mm thickness]  \n`;
+    result += `Finish of surface : Matte finish\n`;
+    result += `Material : Carbon fiber Bi-directional 3K woven fabric + Epoxy resin as matrix.\n`;
+    result += `Process : Roll wrap\n`;
+    result += `Qty./lot required : ${qty} nos\n`;
+    result += `Price/ pcs. : Rs.${price}/-\n\n`;
+  });
+
+  result += `Note:\n[1] The dimensional tolerance for Tube is : OD +/- 0.1 mm, Length + 2-5 mm.\n\n`;
+  result += `Terms & Conditions:\n`;
+  result += `Payment : 50% advance along with the Purchase order, remaining amount to be paid prior to dispatch .\n`;
+  result += `Taxes : 18 % GST Extra as actual\n`;
+  result += `Inspection : At our end\n`;
+  result += `Packing : Extra as actual\n`;
+  result += `Freight : Extra as actual.\n`;
+  result += `Validity : 7 days.\n\n`;
+  result += `Hoping to receive your valued order.`;
+
+  setQuote(result);
+};
 
   const downloadPDF = () => {
     const doc = new jsPDF();
