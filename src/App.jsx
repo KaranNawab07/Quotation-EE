@@ -10,8 +10,8 @@ export default function App() {
       ...entries,
       {
         type,
-        od: "", id: "", length: "", // tube
-        l: "", w: "", t: "",        // sheet
+        od: "", id: "", length: "", // for tube
+        l: "", w: "", t: "",        // for sheet
         qty: 1,
         price: 0,
         material: "",
@@ -23,7 +23,6 @@ export default function App() {
     const updated = [...entries];
     updated[index][field] = value;
 
-    // Recalculate price
     const entry = updated[index];
     if (entry.type === "tube" && entry.od && entry.id && entry.length) {
       const thickness = (parseFloat(entry.od) - parseFloat(entry.id)) / 2;
